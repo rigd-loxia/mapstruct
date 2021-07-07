@@ -24,6 +24,14 @@
     }
     </#if>
 
+    <#if hasSubClassMappings()>
+        <#list subClassMappings as subClass>
+            if (${parameters[0].name} instanceof <@includeModel object=subClass.sourceType/>) {
+                return null; // TODO: issue 131: call the correct mapping method for mapping the subclass. Requirement: mapping needs to be manually defined.
+            }
+        </#list>
+    </#if>
+
     <#if !existingInstanceMapping>
         <#if hasConstructorMappings()>
             <#if (sourceParameters?size > 1)>

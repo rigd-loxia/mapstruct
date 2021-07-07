@@ -34,7 +34,8 @@ public class MappingMethodOptions {
         null,
         null,
         null,
-        Collections.emptyList()
+        Collections.emptyList(),
+        null
     );
 
     private MapperOptions mapper;
@@ -45,12 +46,15 @@ public class MappingMethodOptions {
     private EnumMappingOptions enumMappingOptions;
     private List<ValueMappingOptions> valueMappings;
     private boolean fullyInitialized;
+    private SubClassMappingOptions subClassMapping;
+
 
     public MappingMethodOptions(MapperOptions mapper, Set<MappingOptions> mappings,
                                 IterableMappingOptions iterableMapping,
                                 MapMappingOptions mapMapping, BeanMappingOptions beanMapping,
                                 EnumMappingOptions enumMappingOptions,
-                                List<ValueMappingOptions> valueMappings) {
+                                List<ValueMappingOptions> valueMappings,
+                                SubClassMappingOptions subClassMapping) {
         this.mapper = mapper;
         this.mappings = mappings;
         this.iterableMapping = iterableMapping;
@@ -58,6 +62,7 @@ public class MappingMethodOptions {
         this.beanMapping = beanMapping;
         this.enumMappingOptions = enumMappingOptions;
         this.valueMappings = valueMappings;
+        this.subClassMapping = subClassMapping;
     }
 
     /**
@@ -97,6 +102,10 @@ public class MappingMethodOptions {
         return valueMappings;
     }
 
+    public SubClassMappingOptions getSubClassMapping() {
+        return subClassMapping;
+    }
+
     public void setIterableMapping(IterableMappingOptions iterableMapping) {
         this.iterableMapping = iterableMapping;
     }
@@ -115,6 +124,10 @@ public class MappingMethodOptions {
 
     public void setValueMappings(List<ValueMappingOptions> valueMappings) {
         this.valueMappings = valueMappings;
+    }
+
+    public void setSubClassMapping(SubClassMappingOptions subClassMapping) {
+        this.subClassMapping = subClassMapping;
     }
 
     public MapperOptions getMapper() {
@@ -186,6 +199,10 @@ public class MappingMethodOptions {
                         }
                     }
                 }
+            }
+
+            if ( !getSubClassMapping().hasAnnotation() && templateOptions.getSubClassMapping().hasAnnotation() ) {
+                setSubClassMapping( templateOptions.getSubClassMapping() );
             }
 
             Set<MappingOptions> newMappings = new LinkedHashSet<>();

@@ -86,6 +86,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
     private final MethodReference finalizerMethod;
 
     private final MappingReferences mappingReferences;
+    private List<SubClassMapping> subClasses;
 
     public static class Builder {
 
@@ -332,6 +333,12 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
 
             }
 
+            List<SubClassMapping> subClasses = method.getOptions().getSubClassMapping().getSubClasses()
+                    .stream()
+                    .map(tm -> ctx.getTypeFactory().getType(tm))
+                    .map(SubClassMapping::new)
+                    .collect(Collectors.toList());
+
             MethodReference finalizeMethod = null;
 
             if ( shouldCallFinalizerMethod( returnTypeToConstruct ) ) {
@@ -349,7 +356,8 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 beforeMappingMethods,
                 afterMappingMethods,
                 finalizeMethod,
-                mappingReferences
+                mappingReferences,
+                subClasses
             );
         }
 
@@ -1600,7 +1608,8 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                               List<LifecycleCallbackMethodReference> beforeMappingReferences,
                               List<LifecycleCallbackMethodReference> afterMappingReferences,
                               MethodReference finalizerMethod,
-                              MappingReferences mappingReferences) {
+                              MappingReferences mappingReferences,
+                              List<SubClassMapping> subClasses) {
         super(
             method,
             existingVariableNames,
@@ -1646,6 +1655,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
             }
         }
         this.returnTypeToConstruct = returnTypeToConstruct;
+        this.subClasses = subClasses;
     }
 
     public List<PropertyMapping> getConstantMappings() {
@@ -1668,6 +1678,14 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
 
     public Type getReturnTypeToConstruct() {
         return returnTypeToConstruct;
+    }
+
+    public boolean hasSubClassMappings() {
+        return !subClasses.isEmpty();
+    }
+
+    public List<SubClassMapping> getSubClassMappings() {
+        return subClasses;
     }
 
     public boolean hasConstructorMappings() {
