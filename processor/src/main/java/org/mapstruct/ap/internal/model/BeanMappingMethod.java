@@ -51,6 +51,7 @@ import org.mapstruct.ap.internal.model.source.MappingOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.SourceMethod;
+import org.mapstruct.ap.internal.model.source.SubClassMappingOptions;
 import org.mapstruct.ap.internal.model.source.selector.SelectedMethod;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.Strings;
@@ -333,11 +334,12 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
 
             }
 
-            List<SubClassMapping> subClasses = method.getOptions().getSubClassMapping().getSubClasses()
-                    .stream()
-                    .map(tm -> ctx.getTypeFactory().getType(tm))
-                    .map(SubClassMapping::new)
-                    .collect(Collectors.toList());
+            List<SubClassMapping> subClasses = new ArrayList<>();
+            for (SubClassMappingOptions subClassMappingOptions : method.getOptions().getSubClassMappings()) {
+                Type sourceType = ctx.getTypeFactory().getType( subClassMappingOptions.getSourceClass() );
+
+                subClasses.add( new SubClassMapping( sourceType ) );
+            }
 
             MethodReference finalizeMethod = null;
 

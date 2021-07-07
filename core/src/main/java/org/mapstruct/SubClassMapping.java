@@ -1,6 +1,7 @@
 package org.mapstruct;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -13,11 +14,17 @@ import java.lang.annotation.Target;
  * 
  * @author Ben Zegveld
  */
+@Repeatable( value = SubClassMappings.class )
 @Retention( RetentionPolicy.CLASS )
 @Target( { ElementType.METHOD, ElementType.ANNOTATION_TYPE } )
 public @interface SubClassMapping {
     /**
-     * @return the source subclasses to check for before using the default mapping as fallback.
+     * @return the source subclass to check for before using the default mapping as fallback.
      */
-    Class<?>[] subClasses();
+    Class<?> sourceClass();
+
+    /**
+     * @return the target subclass to map the sourceSubClass to.
+     */
+    Class<?> targetClass();
 }

@@ -35,7 +35,7 @@ public class MappingMethodOptions {
         null,
         null,
         Collections.emptyList(),
-        null
+        Collections.emptyList()
     );
 
     private MapperOptions mapper;
@@ -46,7 +46,7 @@ public class MappingMethodOptions {
     private EnumMappingOptions enumMappingOptions;
     private List<ValueMappingOptions> valueMappings;
     private boolean fullyInitialized;
-    private SubClassMappingOptions subClassMapping;
+    private List<SubClassMappingOptions> subClassMapping;
 
 
     public MappingMethodOptions(MapperOptions mapper, Set<MappingOptions> mappings,
@@ -54,7 +54,7 @@ public class MappingMethodOptions {
                                 MapMappingOptions mapMapping, BeanMappingOptions beanMapping,
                                 EnumMappingOptions enumMappingOptions,
                                 List<ValueMappingOptions> valueMappings,
-                                SubClassMappingOptions subClassMapping) {
+                                List<SubClassMappingOptions> subClassMapping) {
         this.mapper = mapper;
         this.mappings = mappings;
         this.iterableMapping = iterableMapping;
@@ -102,7 +102,7 @@ public class MappingMethodOptions {
         return valueMappings;
     }
 
-    public SubClassMappingOptions getSubClassMapping() {
+    public List<SubClassMappingOptions> getSubClassMappings() {
         return subClassMapping;
     }
 
@@ -126,7 +126,7 @@ public class MappingMethodOptions {
         this.valueMappings = valueMappings;
     }
 
-    public void setSubClassMapping(SubClassMappingOptions subClassMapping) {
+    public void setSubClassMappings(List<SubClassMappingOptions> subClassMapping) {
         this.subClassMapping = subClassMapping;
     }
 
@@ -201,8 +201,25 @@ public class MappingMethodOptions {
                 }
             }
 
-            if ( !getSubClassMapping().hasAnnotation() && templateOptions.getSubClassMapping().hasAnnotation() ) {
-                setSubClassMapping( templateOptions.getSubClassMapping() );
+            if ( getSubClassMappings() == null ) {
+                if ( templateOptions.getSubClassMappings() != null ) {
+                    // there were no mappings, so the inherited mappings are the new ones
+                    setSubClassMappings( templateOptions.getSubClassMappings() );
+                }
+                else {
+                    setSubClassMappings( Collections.emptyList() );
+                }
+            }
+            else {
+                if ( templateOptions.getSubClassMappings() != null ) {
+                    // iff there are also inherited mappings, we inverse and add them.
+                    for ( SubClassMappingOptions inheritedSubClassMapping : templateOptions.getSubClassMappings() ) {
+                        if ( inheritedSubClassMapping != null
+                            && !getSubClassMappings().contains( inheritedSubClassMapping ) ) {
+                            getSubClassMappings().add( inheritedSubClassMapping );
+                        }
+                    }
+                }
             }
 
             Set<MappingOptions> newMappings = new LinkedHashSet<>();

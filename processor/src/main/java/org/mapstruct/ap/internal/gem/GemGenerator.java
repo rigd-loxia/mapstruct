@@ -29,6 +29,7 @@ import org.mapstruct.Named;
 import org.mapstruct.ObjectFactory;
 import org.mapstruct.Qualifier;
 import org.mapstruct.SubClassMapping;
+import org.mapstruct.SubClassMappings;
 import org.mapstruct.TargetType;
 import org.mapstruct.ValueMapping;
 import org.mapstruct.ValueMappings;
@@ -49,6 +50,7 @@ import org.mapstruct.tools.gem.GemDefinition;
 @GemDefinition(EnumMapping.class)
 @GemDefinition(MapMapping.class)
 @GemDefinition(SubClassMapping.class)
+@GemDefinition(SubClassMappings.class)
 @GemDefinition(TargetType.class)
 @GemDefinition(MappingTarget.class)
 @GemDefinition(DecoratedWith.class)

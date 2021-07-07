@@ -1,67 +1,98 @@
 package org.mapstruct.ap.internal.model.source;
 
-import static org.mapstruct.ap.internal.util.Message.ENUMMAPPING_MISSING_CONFIGURATION;
+import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_ILLEGAL_SUBCLASS;
+import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_METHOD_SIGNATURE_NOT_SUPPORTED;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import org.mapstruct.ap.internal.gem.SubClassMappingGem;
+import org.mapstruct.ap.internal.gem.SubClassMappingsGem;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.TypeUtils;
 
-// is this extends needed?
 public class SubClassMappingOptions extends DelegatingOptions {
 
-    private List<TypeMirror> subClasses;
+    private TypeMirror sourceClass;
+    private TypeMirror targetClass;
 
-    public SubClassMappingOptions(List<TypeMirror> subClasses, DelegatingOptions next) {
+    public SubClassMappingOptions(TypeMirror sourceClass, TypeMirror targetClass, DelegatingOptions next) {
         super( next );
-        this.subClasses = subClasses;
+        this.sourceClass = sourceClass;
+        this.targetClass = targetClass;
     }
 
     @Override
     public boolean hasAnnotation() {
-        return !subClasses.isEmpty();
+        return sourceClass != null && targetClass != null;
     }
 
-    public static SubClassMappingOptions getInstanceOn(ExecutableElement method, MapperOptions mapperOptions,
+    public static List<SubClassMappingOptions> getInstanceOn(ExecutableElement method, MapperOptions mapperOptions,
                                                        FormattingMessager messager, TypeUtils typeUtils) {
 
-        SubClassMappingGem subClassMapping = SubClassMappingGem.instanceOn( method );
-        if ( subClassMapping == null ) {
-            return new SubClassMappingOptions( Collections.emptyList(), mapperOptions );
-        }
-        else if ( !isConsistent( subClassMapping, method, messager, typeUtils ) ) {
-            return new SubClassMappingOptions( Collections.emptyList(), mapperOptions );
+        SubClassMappingsGem subClassMappings = SubClassMappingsGem.instanceOn( method );
+        if ( subClassMappings == null ) {
+            return Collections.emptyList();
         }
 
-        List<TypeMirror> subClasses = subClassMapping.subClasses().getValue();
+        List<SubClassMappingOptions> subClassMappingOptions = new ArrayList<>();
 
-        return new SubClassMappingOptions( subClasses, mapperOptions );
+        for ( SubClassMappingGem subClassMapping : subClassMappings.value().get() ) {
+
+            if ( !isConsistent( subClassMapping, method, messager, typeUtils ) ) {
+                continue;
+            }
+
+            TypeMirror sourceSubClass = subClassMapping.sourceClass().getValue();
+            TypeMirror targetSubClass = subClassMapping.targetClass().getValue();
+
+            subClassMappingOptions.add( new SubClassMappingOptions( sourceSubClass, targetSubClass, mapperOptions ) );
+        }
+        return subClassMappingOptions;
     }
 
     private static boolean isConsistent(SubClassMappingGem gem, ExecutableElement method, FormattingMessager messager,
                                         TypeUtils typeUtils) {
 
-        List<TypeMirror> subClasses = gem.subClasses().getValue();
+        if ( method.getParameters().isEmpty() || method.getReturnType().getKind() == TypeKind.VOID ) {
+            messager
+                    .printMessage(
+                        method,
+                        gem.mirror(),
+                        SUBCLASSMAPPING_METHOD_SIGNATURE_NOT_SUPPORTED );
+            return false;
+        }
 
+        TypeMirror sourceSubClass = gem.sourceClass().getValue();
+        TypeMirror targetSubClass = gem.targetClass().getValue();
+        TypeMirror sourceParentType = method.getParameters().get( 0 ).asType();
+        TypeMirror targetParentType = method.getReturnType();
         boolean isConsistent = true;
 
-        TypeMirror parentType = method.getParameters().get( 0 ).asType();
-        for ( TypeMirror childType : subClasses ) {
-            if ( !isChildOfParent( typeUtils, childType, parentType ) ) {
-                messager
-                        .printMessage(
-                            method,
-                            gem.mirror(),
-                            ENUMMAPPING_MISSING_CONFIGURATION,
-                            parentType.toString(),
-                            childType.toString() );
-                return false;
-            }
+        if ( !isChildOfParent( typeUtils, sourceSubClass, sourceParentType ) ) {
+            messager
+                    .printMessage(
+                        method,
+                        gem.mirror(),
+                        SUBCLASSMAPPING_ILLEGAL_SUBCLASS,
+                        sourceParentType.toString(),
+                        sourceSubClass.toString() );
+            isConsistent = false;
+        }
+        if ( !isChildOfParent( typeUtils, targetSubClass, targetParentType ) ) {
+            messager
+                    .printMessage(
+                        method,
+                        gem.mirror(),
+                        SUBCLASSMAPPING_ILLEGAL_SUBCLASS,
+                        targetParentType.toString(),
+                        targetSubClass.toString() );
+            isConsistent = false;
         }
         return isConsistent;
     }
@@ -70,7 +101,11 @@ public class SubClassMappingOptions extends DelegatingOptions {
         return typeUtils.isAssignable( childType, parentType );
     }
 
-    public List<TypeMirror> getSubClasses() {
-        return subClasses;
+    public TypeMirror getSourceClass() {
+        return sourceClass;
+    }
+
+    public TypeMirror getTargetClass() {
+        return targetClass;
     }
 }

@@ -300,7 +300,8 @@ public class MethodRetrievalProcessor implements ModelElementProcessor<Void, Lis
             messager
         );
 
-        SubClassMappingOptions subClassMappingOptions = SubClassMappingOptions.getInstanceOn(
+        List<SubClassMappingOptions> subClassMappingOptions =
+            SubClassMappingOptions.getInstanceOn(
                 method,
                 mapperOptions,
                 messager,
