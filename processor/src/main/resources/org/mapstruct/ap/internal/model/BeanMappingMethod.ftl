@@ -30,7 +30,6 @@
         <#list subClassMappings as subClass>
             <#if !first>else</#if> if (${parameters[0].name} instanceof <@includeModel object=subClass.sourceType/>) {
                 ${resultName} = ${subClass.mappingMethod}( (<@includeModel object=subClass.sourceType/>) ${parameters[0].name} );
-                // TODO: issue 131: make certain that that mapping method is created if it is not already mentioned.
             }
             <#assign first = false />
         </#list>

@@ -341,7 +341,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 TypeFactory typeFactory = ctx.getTypeFactory();
                 Type sourceType = typeFactory.getType( subClassMappingOptions.getSourceClass() );
                 Type targetType = typeFactory.getType( subClassMappingOptions.getTargetClass() );
-                subClasses.add( new SubClassMapping( sourceType, targetType ) );
+                subClasses.add( new SubClassMapping( sourceType, targetType, ctx.getMessager() ) );
             }
 
             MethodReference finalizeMethod = null;

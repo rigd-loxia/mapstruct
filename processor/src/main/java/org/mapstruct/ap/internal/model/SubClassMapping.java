@@ -7,6 +7,9 @@ import java.util.Set;
 
 import org.mapstruct.ap.internal.model.common.ModelElement;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.util.FormattingMessager;
+import org.mapstruct.ap.internal.util.Message;
+
 import java.util.Objects;
 
 public class SubClassMapping extends ModelElement {
@@ -14,10 +17,12 @@ public class SubClassMapping extends ModelElement {
     private final Type sourceType;
     private Type targetType;
     private MappingMethod mappingMethod;
+    private FormattingMessager messager;
 
-    public SubClassMapping(Type sourceType, Type targetType) {
+    public SubClassMapping(Type sourceType, Type targetType, FormattingMessager messager) {
         this.sourceType = sourceType;
         this.targetType = targetType;
+        this.messager = messager;
     }
 
     public Type getSourceType() {
@@ -31,6 +36,13 @@ public class SubClassMapping extends ModelElement {
                 && mappingMethod.getResultType().equals( targetType ) ) {
                 this.mappingMethod = mappingMethod;
             }
+        }
+        if ( mappingMethod == null ) {
+            messager
+                    .printMessage(
+                        Message.SUBCLASSMAPPING_MISSING_METHOD,
+                        sourceType.getFullyQualifiedName(),
+                        targetType.getFullyQualifiedName() );
         }
     }
 
