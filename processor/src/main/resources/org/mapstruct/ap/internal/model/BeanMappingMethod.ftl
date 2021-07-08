@@ -25,12 +25,16 @@
     </#if>
 
     <#if hasSubClassMappings()>
+        <@includeModel object=returnTypeToConstruct/> ${resultName};
+        <#assign first = true />
         <#list subClassMappings as subClass>
-            if (${parameters[0].name} instanceof <@includeModel object=subClass.sourceType/>) {
-                // TODO: issue 131: call the correct mapping method for mapping the subclass.
-                // TODO: issue 131: make certain that that mapping method is created if it is not already mentioned.  
+            <#if !first>else</#if> if (${parameters[0].name} instanceof <@includeModel object=subClass.sourceType/>) {
+                ${resultName} = ${subClass.mappingMethod}( (<@includeModel object=subClass.sourceType/>) ${parameters[0].name} );
+                // TODO: issue 131: make certain that that mapping method is created if it is not already mentioned.
             }
+            <#assign first = false />
         </#list>
+        else {
     </#if>
 
     <#if !existingInstanceMapping>
@@ -76,9 +80,9 @@
             </#list>
 
 
-            <@includeModel object=returnTypeToConstruct/> ${resultName} = <@includeModel object=factoryMethod targetType=returnTypeToConstruct/>;
+            <#if !hasSubClassMappings()><@includeModel object=returnTypeToConstruct/> </#if>${resultName} = <@includeModel object=factoryMethod targetType=returnTypeToConstruct/>;
         <#else >
-            <@includeModel object=returnTypeToConstruct/> ${resultName} = <#if factoryMethod??><@includeModel object=factoryMethod targetType=returnTypeToConstruct/><#else>new <@includeModel object=returnTypeToConstruct/>()</#if>;
+            <#if !hasSubClassMappings()><@includeModel object=returnTypeToConstruct/> </#if>${resultName} = <#if factoryMethod??><@includeModel object=factoryMethod targetType=returnTypeToConstruct/><#else>new <@includeModel object=returnTypeToConstruct/>()</#if>;
         </#if>
 
     </#if>
@@ -122,6 +126,9 @@
     	<@includeModel object=callback targetBeanName=resultName targetType=targetType/>
     </#list>
     <#if returnType.name != "void">
+    <#if hasSubClassMappings()>
+        }
+    </#if>
 
     <#if finalizerMethod??>
         return ${resultName}.<@includeModel object=finalizerMethod />;

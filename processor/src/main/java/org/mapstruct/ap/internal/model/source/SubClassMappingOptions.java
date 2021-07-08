@@ -98,7 +98,7 @@ public class SubClassMappingOptions extends DelegatingOptions {
     }
 
     private static boolean isChildOfParent(TypeUtils typeUtils, TypeMirror childType, TypeMirror parentType) {
-        return typeUtils.isAssignable( childType, parentType );
+        return typeUtils.isSubtype( childType, parentType );
     }
 
     public TypeMirror getSourceClass() {

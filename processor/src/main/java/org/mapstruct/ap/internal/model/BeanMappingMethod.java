@@ -44,6 +44,7 @@ import org.mapstruct.ap.internal.model.common.BuilderType;
 import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.ParameterBinding;
 import org.mapstruct.ap.internal.model.common.Type;
+import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.dependency.GraphAnalyzer;
 import org.mapstruct.ap.internal.model.dependency.GraphAnalyzer.GraphAnalyzerBuilder;
 import org.mapstruct.ap.internal.model.source.BeanMappingOptions;
@@ -58,6 +59,7 @@ import org.mapstruct.ap.internal.util.Strings;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
 import org.mapstruct.ap.internal.util.accessor.AccessorType;
 import org.mapstruct.ap.internal.util.accessor.ParameterElementAccessor;
+import org.mapstruct.ap.spi.BuilderInfo;
 
 import static org.mapstruct.ap.internal.model.beanmapping.MappingReferences.forSourceMethod;
 import static org.mapstruct.ap.internal.util.Collections.first;
@@ -335,10 +337,11 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
             }
 
             List<SubClassMapping> subClasses = new ArrayList<>();
-            for (SubClassMappingOptions subClassMappingOptions : method.getOptions().getSubClassMappings()) {
-                Type sourceType = ctx.getTypeFactory().getType( subClassMappingOptions.getSourceClass() );
-
-                subClasses.add( new SubClassMapping( sourceType ) );
+            for ( SubClassMappingOptions subClassMappingOptions : method.getOptions().getSubClassMappings() ) {
+                TypeFactory typeFactory = ctx.getTypeFactory();
+                Type sourceType = typeFactory.getType( subClassMappingOptions.getSourceClass() );
+                Type targetType = typeFactory.getType( subClassMappingOptions.getTargetClass() );
+                subClasses.add( new SubClassMapping( sourceType, targetType ) );
             }
 
             MethodReference finalizeMethod = null;

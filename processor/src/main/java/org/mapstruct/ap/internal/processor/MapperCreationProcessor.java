@@ -44,6 +44,7 @@ import org.mapstruct.ap.internal.model.MapperReference;
 import org.mapstruct.ap.internal.model.MappingBuilderContext;
 import org.mapstruct.ap.internal.model.MappingMethod;
 import org.mapstruct.ap.internal.model.StreamMappingMethod;
+import org.mapstruct.ap.internal.model.SubClassMapping;
 import org.mapstruct.ap.internal.model.SupportingConstructorFragment;
 import org.mapstruct.ap.internal.model.ValueMappingMethod;
 import org.mapstruct.ap.internal.model.common.FormattingParameters;
@@ -54,6 +55,7 @@ import org.mapstruct.ap.internal.model.source.MappingMethodOptions;
 import org.mapstruct.ap.internal.model.source.Method;
 import org.mapstruct.ap.internal.model.source.SelectionParameters;
 import org.mapstruct.ap.internal.model.source.SourceMethod;
+import org.mapstruct.ap.internal.model.source.SubClassMappingOptions;
 import org.mapstruct.ap.internal.option.Options;
 import org.mapstruct.ap.internal.processor.creation.MappingResolverImpl;
 import org.mapstruct.ap.internal.util.AccessorNamingUtils;
@@ -198,10 +200,11 @@ public class MapperCreationProcessor implements ModelElementProcessor<List<Sourc
             .options( options )
             .versionInformation( versionInformation )
             .decorator( getDecorator( element, methods, mapperOptions.implementationName(),
-                mapperOptions.implementationPackage(), getExtraImports( element, mapperOptions ) ) )
+                                                mapperOptions.implementationPackage(),
+                                                getExtraImports( element, mapperOptions, methods ) ) )
             .typeFactory( typeFactory )
             .elementUtils( elementUtils )
-            .extraImports( getExtraImports( element, mapperOptions ) )
+                                            .extraImports( getExtraImports( element, mapperOptions, methods ) )
             .implName( mapperOptions.implementationName() )
             .implPackage( mapperOptions.implementationPackage() )
             .build();
@@ -294,9 +297,19 @@ public class MapperCreationProcessor implements ModelElementProcessor<List<Sourc
         return decorator;
     }
 
-    private SortedSet<Type> getExtraImports(TypeElement element,  MapperOptions mapperOptions) {
+    private SortedSet<Type> getExtraImports(TypeElement element, MapperOptions mapperOptions,
+                                            List<SourceMethod> methods) {
         SortedSet<Type> extraImports = new TreeSet<>();
 
+
+        for ( SourceMethod method : methods ) {
+            for ( SubClassMappingOptions subClassMapping : method.getOptions().getSubClassMappings() ) {
+                Type type = typeFactory.getType( subClassMapping.getTargetClass() );
+                extraImports.add( type );
+                type = typeFactory.getType( subClassMapping.getSourceClass() );
+                extraImports.add( type );
+            }
+        }
 
         for ( TypeMirror extraImport : mapperOptions.imports() ) {
             Type type = typeFactory.getType( extraImport );
@@ -428,6 +441,13 @@ public class MapperCreationProcessor implements ModelElementProcessor<List<Sourc
                 // implementation as well. The check below must only be executed if there's no factory
                 // method that could be responsible.
                 reportErrorIfNoImplementationTypeIsRegisteredForInterfaceReturnType( method );
+            }
+        }
+        for ( MappingMethod mappingMethod : mappingMethods ) {
+            if ( mappingMethod instanceof BeanMappingMethod ) {
+                for ( SubClassMapping subClassMapping : ( (BeanMappingMethod) mappingMethod ).getSubClassMappings() ) {
+                    subClassMapping.setMappingMethod( mappingMethods );
+                }
             }
         }
         return mappingMethods;

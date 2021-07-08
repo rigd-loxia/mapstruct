@@ -16,6 +16,7 @@ import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.model.source.MappingOptions;
 import org.mapstruct.ap.internal.model.source.SourceMethod;
+import org.mapstruct.ap.internal.model.source.SubClassMappingOptions;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 
 public class MappingReferences {
