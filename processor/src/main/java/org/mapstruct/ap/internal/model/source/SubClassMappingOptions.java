@@ -1,3 +1,8 @@
+/*
+ * Copyright MapStruct Authors.
+ *
+ * Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package org.mapstruct.ap.internal.model.source;
 
 import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_ILLEGAL_SUBCLASS;
@@ -16,6 +21,9 @@ import org.mapstruct.ap.internal.gem.SubClassMappingsGem;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.TypeUtils;
 
+/**
+ * @author Ben Zegveld
+ */
 public class SubClassMappingOptions extends DelegatingOptions {
 
     private TypeMirror sourceClass;

@@ -95,7 +95,7 @@ public class SourceMethod implements Method {
         private EnumMappingOptions enumMappingOptions;
         private ParameterProvidedMethods contextProvidedMethods;
         private List<Type> typeParameters;
-        private List<SubClassMappingOptions> subClassMappings;
+        private List<SubClassMappingOptions> subClassMappings = Collections.emptyList();
 
         private boolean verboseLogging;
 

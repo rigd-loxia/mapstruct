@@ -1,3 +1,8 @@
+/*
+ * Copyright MapStruct Authors.
+ *
+ * Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package org.mapstruct;
 
 import java.lang.annotation.ElementType;
@@ -11,7 +16,7 @@ import java.lang.annotation.Target;
  * <p>
  * The subclasses to check for when handling this conversion method must be added.
  * </p>
- * 
+ *
  * @author Ben Zegveld
  */
 @Repeatable( value = SubClassMappings.class )

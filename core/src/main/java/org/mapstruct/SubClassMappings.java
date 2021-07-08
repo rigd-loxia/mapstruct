@@ -12,11 +12,11 @@ import java.lang.annotation.Target;
 
 /**
  * Constructs a set of subClass mappings.
- * 
+ *
  * @author Ben Zegveld
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.CLASS)
+@Target( ElementType.METHOD )
+@Retention( RetentionPolicy.CLASS )
 public @interface SubClassMappings {
 
     SubClassMapping[] value();

@@ -1,10 +1,12 @@
+/*
+ * Copyright MapStruct Authors.
+ *
+ * Licensed under the Apache License version 2.0, available at http://www.apache.org/licenses/LICENSE-2.0
+ */
 package org.mapstruct.ap.test.bugs._131;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Objects;
-
-import org.assertj.core.api.Assertions;
 import org.mapstruct.ap.testutil.IssueKey;
 import org.mapstruct.ap.testutil.ProcessorTest;
 import org.mapstruct.ap.testutil.WithClasses;
@@ -27,10 +29,10 @@ public class Issue131Test {
         org.mapstruct.ap.test.bugs._131.dto.VehicleCollection result = Issue131Mapper.INSTANCE.map( vehicles );
 
         assertThat( result.getVehicles() ).doesNotContainNull();
-        assertThat( result.getVehicles() )
-                  .extracting( vehicle -> (Class) vehicle.getClass() ) // remove generic so that test works.
-                  .containsExactly(
-                      org.mapstruct.ap.test.bugs._131.dto.Car.class,
-                      org.mapstruct.ap.test.bugs._131.dto.Bike.class );
+        assertThat( result.getVehicles() ) // remove generic so that test works.
+                                          .extracting( vehicle -> (Class) vehicle.getClass() )
+                                          .containsExactly(
+                                              org.mapstruct.ap.test.bugs._131.dto.Car.class,
+                                              org.mapstruct.ap.test.bugs._131.dto.Bike.class );
     }
 }
