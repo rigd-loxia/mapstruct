@@ -9,6 +9,7 @@ import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_ILLEGAL_SUB
 import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_METHOD_SIGNATURE_NOT_SUPPORTED;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,13 +45,22 @@ public class SubClassMappingOptions extends DelegatingOptions {
                                                        FormattingMessager messager, TypeUtils typeUtils) {
 
         SubClassMappingsGem subClassMappings = SubClassMappingsGem.instanceOn( method );
+        List<SubClassMappingGem> subClassMappingAnnotations;
         if ( subClassMappings == null ) {
-            return Collections.emptyList();
+            if ( SubClassMappingGem.instanceOn( method ) != null ) {
+                subClassMappingAnnotations = Arrays.asList( SubClassMappingGem.instanceOn( method ) );
+            }
+            else {
+                return Collections.emptyList();
+            }
+        }
+        else {
+            subClassMappingAnnotations = subClassMappings.value().get();
         }
 
         List<SubClassMappingOptions> subClassMappingOptions = new ArrayList<>();
 
-        for ( SubClassMappingGem subClassMapping : subClassMappings.value().get() ) {
+        for ( SubClassMappingGem subClassMapping : subClassMappingAnnotations ) {
 
             if ( !isConsistent( subClassMapping, method, messager, typeUtils ) ) {
                 continue;

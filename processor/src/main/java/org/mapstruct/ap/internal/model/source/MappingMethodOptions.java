@@ -200,26 +200,7 @@ public class MappingMethodOptions {
                 }
             }
 
-            if ( getSubClassMappings() == null ) {
-                if ( templateOptions.getSubClassMappings() != null ) {
-                    // there were no mappings, so the inherited mappings are the new ones
-                    setSubClassMappings( templateOptions.getSubClassMappings() );
-                }
-                else {
-                    setSubClassMappings( Collections.emptyList() );
-                }
-            }
-            else {
-                if ( templateOptions.getSubClassMappings() != null ) {
-                    // iff there are also inherited mappings, we inverse and add them.
-                    for ( SubClassMappingOptions inheritedSubClassMapping : templateOptions.getSubClassMappings() ) {
-                        if ( inheritedSubClassMapping != null
-                            && !getSubClassMappings().contains( inheritedSubClassMapping ) ) {
-                            getSubClassMappings().add( inheritedSubClassMapping );
-                        }
-                    }
-                }
-            }
+            // Do NOT inherit subclass mapping options!!!
 
             Set<MappingOptions> newMappings = new LinkedHashSet<>();
             for ( MappingOptions mapping : templateOptions.getMappings() ) {
