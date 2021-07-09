@@ -168,7 +168,11 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                     // the userDefinedReturn type can also require a builder. That buildertype is already set
                     returnTypeImpl = returnTypeBuilder.getBuilder();
                     initializeFactoryMethod( returnTypeImpl, selectionParameters );
-                    if ( factoryMethod != null || canReturnTypeBeConstructed( returnTypeImpl ) ) {
+                    if ( factoryMethod != null
+                        || hasSubclassMappings()
+                            && isReturnTypeAbstractOrcanBeConstructed( returnTypeImpl )
+                        || !hasSubclassMappings()
+                            && canReturnTypeBeConstructed( returnTypeImpl ) ) {
                         returnTypeToConstruct = returnTypeImpl;
                     }
                     else {
@@ -188,7 +192,9 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 else if ( !method.isUpdateMethod() ) {
                     returnTypeImpl = method.getReturnType();
                     initializeFactoryMethod( returnTypeImpl, selectionParameters );
-                    if ( factoryMethod != null || canReturnTypeBeConstructed( returnTypeImpl ) ) {
+                    if ( factoryMethod != null
+                        || hasSubclassMappings() && isReturnTypeAbstractOrcanBeConstructed( returnTypeImpl )
+                        || !hasSubclassMappings() && canReturnTypeBeConstructed( returnTypeImpl ) ) {
                         returnTypeToConstruct = returnTypeImpl;
                     }
                     else {
@@ -364,6 +370,10 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 mappingReferences,
                 subClasses
             );
+        }
+
+        private boolean hasSubclassMappings() {
+            return !method.getOptions().getSubClassMappings().isEmpty();
         }
 
         private void initializeMappingReferencesIfNeeded(Type resultTypeToMap) {
@@ -568,6 +578,20 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                     Message.GENERAL_NO_SUITABLE_CONSTRUCTOR,
                     returnType.describe()
                 );
+                error = false;
+            }
+            return error;
+        }
+
+        private boolean isReturnTypeAbstractOrcanBeConstructed(Type returnType) {
+            boolean error = true;
+            if ( !returnType.isAbstract() && !returnType.hasAccessibleConstructor() ) {
+                ctx
+                   .getMessager()
+                   .printMessage(
+                       method.getExecutable(),
+                       Message.GENERAL_NO_SUITABLE_CONSTRUCTOR,
+                       returnType.describe() );
                 error = false;
             }
             return error;
@@ -1691,6 +1715,11 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
 
     public List<SubClassMapping> getSubClassMappings() {
         return subClasses;
+    }
+
+    public boolean isAbstractReturnType() {
+        return getFactoryMethod() == null && !hasConstructorMappings() && returnTypeToConstruct != null
+            && returnTypeToConstruct.isAbstract();
     }
 
     public boolean hasConstructorMappings() {
