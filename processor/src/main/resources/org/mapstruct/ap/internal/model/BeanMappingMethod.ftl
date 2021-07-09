@@ -25,7 +25,9 @@
     </#if>
 
     <#if hasSubClassMappings()>
-        <@includeModel object=returnTypeToConstruct/> ${resultName};
+        <#if !isAbstractReturnType()>
+            <@includeModel object=returnTypeToConstruct/> ${resultName};
+        </#if>
         <#assign first = true />
         <#list subClassMappings as subClass>
             <#if !first>else</#if> if (${parameters[0].name} instanceof <@includeModel object=subClass.sourceType/>) {
@@ -35,9 +37,8 @@
         </#list>
         else {
     </#if>
-
     <#if isAbstractReturnType()>
-        throw new IllegalStateException("Not all subclasses are supported for this mapping. Missing for " + ${parameters[0].name}.getClass());
+        throw new IllegalArgumentException("Not all subclasses are supported for this mapping. Missing for " + ${parameters[0].name}.getClass());
         <#if hasSubClassMappings()>
             }
         </#if>

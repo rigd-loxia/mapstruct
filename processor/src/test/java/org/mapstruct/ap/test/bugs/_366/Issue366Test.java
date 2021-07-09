@@ -38,14 +38,14 @@ public class Issue366Test {
     }
 
     @ProcessorTest
-    void mappingOfUnknownChildThrowsIllegalStateException() {
+    void mappingOfUnknownChildThrowsIllegalArgumentException() {
         org.mapstruct.ap.test.bugs._366.domain.VehicleCollection vehicles =
             new org.mapstruct.ap.test.bugs._366.domain.VehicleCollection();
         vehicles.getVehicles().add( new org.mapstruct.ap.test.bugs._366.domain.Car() );
         vehicles.getVehicles().add( new org.mapstruct.ap.test.bugs._366.domain.Motorcycle() );
 
-        IllegalStateException thrown =
-            assertThrows( IllegalStateException.class, () -> Issue366Mapper.INSTANCE.map( vehicles ) );
+        IllegalArgumentException thrown =
+            assertThrows( IllegalArgumentException.class, () -> Issue366Mapper.INSTANCE.map( vehicles ) );
 
         String expectedMessage = "Not all subclasses are supported for this mapping. "
             + "Missing for class org.mapstruct.ap.test.bugs._366.domain.Motorcycle";
