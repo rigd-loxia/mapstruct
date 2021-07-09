@@ -11,14 +11,49 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Constructs a set of subClass mappings.
+ * Configures the SubClassMappings of several subclasses.
+ * <p>
+ * <strong>TIP: When using java 8 or later, you can omit the @SubClassMappings
+ * Wrapper annotation and directly specify several @SubClassMapping annotations
+ * on one method.</strong>
+ * </p>
+ * <p>These two examples are equal.
+ * </p>
+ * <pre><code class='java'>
+ * // before java 8
+ * &#64;Mapper
+ * public interface MyMapper {
+ *     &#64;SubClassMappings({
+ *         &#64;SubClassMapping(sourceClass = firstSub.class,
+ *                          targetClass = firstTargetSub.class),
+ *         &#64;SubClassMapping(sourceClass = secondSub.class,
+ *                          targetClass = secondTargetSub.class)
+ *     })
+ *     ParentTarget toParentTarget(Parent parent);
+ * }
+ * </code></pre>
+ * <pre><code class='java'>
+ * // java 8 and later
+ * &#64;Mapper
+ * public interface MyMapper {
+ *     &#64;SubClassMapping(sourceClass = firstSub.class,
+ *                      targetClass = firstTargetSub.class),
+ *     &#64;SubClassMapping(sourceClass = secondSub.class,
+ *                      targetClass = secondTargetSub.class)
+ *     ParentTarget toParentTarget(Parent parent);
+ * }
+ * </code></pre>
  *
  * @author Ben Zegveld
+ * @since 1.5
  */
 @Target( ElementType.METHOD )
 @Retention( RetentionPolicy.CLASS )
 public @interface SubClassMappings {
 
+    /**
+     * @return the subClassMappings to apply.
+     */
     SubClassMapping[] value();
 
 }
