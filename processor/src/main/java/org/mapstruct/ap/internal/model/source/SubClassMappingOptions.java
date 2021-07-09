@@ -5,6 +5,7 @@
  */
 package org.mapstruct.ap.internal.model.source;
 
+import static java.util.Objects.nonNull;
 import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_ILLEGAL_SUBCLASS;
 import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_METHOD_SIGNATURE_NOT_SUPPORTED;
 
@@ -46,16 +47,14 @@ public class SubClassMappingOptions extends DelegatingOptions {
 
         SubClassMappingsGem subClassMappings = SubClassMappingsGem.instanceOn( method );
         List<SubClassMappingGem> subClassMappingAnnotations;
-        if ( subClassMappings == null ) {
-            if ( SubClassMappingGem.instanceOn( method ) != null ) {
-                subClassMappingAnnotations = Arrays.asList( SubClassMappingGem.instanceOn( method ) );
-            }
-            else {
-                return Collections.emptyList();
-            }
+        if ( nonNull( subClassMappings ) ) {
+            subClassMappingAnnotations = subClassMappings.value().get();
+        }
+        else if ( nonNull( SubClassMappingGem.instanceOn( method ) ) ) {
+            subClassMappingAnnotations = Arrays.asList( SubClassMappingGem.instanceOn( method ) );
         }
         else {
-            subClassMappingAnnotations = subClassMappings.value().get();
+            return Collections.emptyList();
         }
 
         List<SubClassMappingOptions> subClassMappingOptions = new ArrayList<>();
