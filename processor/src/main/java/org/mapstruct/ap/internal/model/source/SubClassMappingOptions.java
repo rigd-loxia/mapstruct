@@ -30,16 +30,26 @@ public class SubClassMappingOptions extends DelegatingOptions {
 
     private TypeMirror sourceClass;
     private TypeMirror targetClass;
+    private ExecutableElement effectiveForMethod;
+    private TypeUtils typeUtils;
 
-    public SubClassMappingOptions(TypeMirror sourceClass, TypeMirror targetClass, DelegatingOptions next) {
+    public SubClassMappingOptions(TypeMirror sourceClass, TypeMirror targetClass, ExecutableElement effectiveForMethod,
+                                  TypeUtils typeUtils, DelegatingOptions next) {
         super( next );
         this.sourceClass = sourceClass;
         this.targetClass = targetClass;
+        this.effectiveForMethod = effectiveForMethod;
+        this.typeUtils = typeUtils;
     }
 
     @Override
     public boolean hasAnnotation() {
         return sourceClass != null && targetClass != null;
+    }
+
+    public boolean isEffective(Method method) {
+        return method.getName().equals( effectiveForMethod.getSimpleName().toString() )
+            && typeUtils.isSameType( method.getReturnType().getTypeMirror(), effectiveForMethod.getReturnType() );
     }
 
     public static List<SubClassMappingOptions> getInstanceOn(ExecutableElement method, MapperOptions mapperOptions,
@@ -68,7 +78,14 @@ public class SubClassMappingOptions extends DelegatingOptions {
             TypeMirror sourceSubClass = subClassMapping.sourceClass().getValue();
             TypeMirror targetSubClass = subClassMapping.targetClass().getValue();
 
-            subClassMappingOptions.add( new SubClassMappingOptions( sourceSubClass, targetSubClass, mapperOptions ) );
+            subClassMappingOptions
+                                  .add(
+                                      new SubClassMappingOptions(
+                                          sourceSubClass,
+                                          targetSubClass,
+                                          method,
+                                          typeUtils,
+                                          mapperOptions ) );
         }
         return subClassMappingOptions;
     }

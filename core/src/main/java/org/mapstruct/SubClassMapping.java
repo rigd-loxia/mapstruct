@@ -24,9 +24,9 @@ import java.lang.annotation.Target;
  * </p>
  *
  * <pre><code class='java'>
- * &#64Mapper
+ * &#64;Mapper
  * public interface MyMapper {
- *    @SubClassMapping (sourceClass = SourceSubClass.class,
+ *    &#64;SubClassMapping (sourceClass = SourceSubClass.class,
  *                      targetClass = TargetSubClass.class)
  *    TargetParent mapParent(SourceParent parent);
  *
@@ -48,7 +48,8 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </code></pre>
- * <strong>Example 2:</strong> For parents that can be created. (e.g. normal classes or interfaces with &#64;Mappper( uses = ObjectFactory.class ) )
+ * <strong>Example 2:</strong> For parents that can be created. (e.g. normal classes or interfaces with
+ * &#64;Mappper( uses = ObjectFactory.class ) )
  * <pre><code class='java'>
  * // generates
  * &#64;Override

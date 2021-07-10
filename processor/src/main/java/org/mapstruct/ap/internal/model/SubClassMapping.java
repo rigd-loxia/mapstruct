@@ -8,14 +8,16 @@ package org.mapstruct.ap.internal.model;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
+import org.mapstruct.ap.internal.model.assignment.AssignmentWrapper;
+import org.mapstruct.ap.internal.model.assignment.ReturnWrapper;
+import org.mapstruct.ap.internal.model.common.Assignment;
 import org.mapstruct.ap.internal.model.common.ModelElement;
+import org.mapstruct.ap.internal.model.common.Parameter;
 import org.mapstruct.ap.internal.model.common.Type;
-import org.mapstruct.ap.internal.util.FormattingMessager;
-import org.mapstruct.ap.internal.util.Message;
-
-import java.util.Objects;
+import org.mapstruct.ap.internal.util.TypeUtils;
 
 /**
  * @author Ben Zegveld
@@ -24,34 +26,18 @@ public class SubClassMapping extends ModelElement {
 
     private final Type sourceType;
     private Type targetType;
-    private MappingMethod mappingMethod;
-    private FormattingMessager messager;
+    private Assignment assignment;
+    private String sourceArgument;
+    private TypeUtils typeUtils;
 
-    public SubClassMapping(Type sourceType, Type targetType, FormattingMessager messager) {
+    public SubClassMapping(Type sourceType, Type targetType, TypeUtils typeUtils) {
         this.sourceType = sourceType;
         this.targetType = targetType;
-        this.messager = messager;
+        this.typeUtils = typeUtils;
     }
 
     public Type getSourceType() {
         return sourceType;
-    }
-
-    public void setMappingMethod(List<MappingMethod> methods) {
-        for ( MappingMethod mappingMethod : methods ) {
-            if ( mappingMethod.getParameters().size() == 1
-                && mappingMethod.getParameters().get( 0 ).getType().equals( sourceType )
-                && mappingMethod.getResultType().equals( targetType ) ) {
-                this.mappingMethod = mappingMethod;
-            }
-        }
-        if ( mappingMethod == null ) {
-            messager
-                    .printMessage(
-                        Message.SUBCLASSMAPPING_MISSING_METHOD,
-                        sourceType.getFullyQualifiedName(),
-                        targetType.getFullyQualifiedName() );
-        }
     }
 
     @Override
@@ -59,8 +45,25 @@ public class SubClassMapping extends ModelElement {
         return new HashSet<>( Arrays.asList( sourceType, targetType ) );
     }
 
-    public String getMappingMethod() {
-        return mappingMethod.getName();
+    public void setAssignment(Assignment assignment) {
+        this.assignment = assignment;
+    }
+
+    public AssignmentWrapper getAssignment() {
+        return new ReturnWrapper( assignment );
+    }
+
+    public void updateWithParameters(List<Parameter> parameters) {
+        for ( Parameter parameter : parameters ) {
+            if ( typeUtils.isAssignable( sourceType.getTypeMirror(), parameter.getType().getTypeMirror() ) ) {
+                sourceArgument = parameter.getName();
+                assignment.setSourceLocalVarName( "(" + sourceType.createReferenceName() + ") " + sourceArgument );
+            }
+        }
+    }
+
+    public String getSourceArgument() {
+        return sourceArgument;
     }
 
     @Override

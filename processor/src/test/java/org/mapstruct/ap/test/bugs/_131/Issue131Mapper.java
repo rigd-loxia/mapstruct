@@ -16,9 +16,7 @@ public interface Issue131Mapper {
     org.mapstruct.ap.test.bugs._131.dto.VehicleCollection
                     map(org.mapstruct.ap.test.bugs._131.domain.VehicleCollection vehicles);
 
-    org.mapstruct.ap.test.bugs._131.dto.Car map(org.mapstruct.ap.test.bugs._131.domain.Car car);
-
-    org.mapstruct.ap.test.bugs._131.dto.Bike map(org.mapstruct.ap.test.bugs._131.domain.Bike bike);
+    org.mapstruct.ap.test.bugs._131.dto.Car mapCar(org.mapstruct.ap.test.bugs._131.domain.Car car);
 
     @SubClassMapping( sourceClass = org.mapstruct.ap.test.bugs._131.domain.Car.class,
                     targetClass = org.mapstruct.ap.test.bugs._131.dto.Car.class )
