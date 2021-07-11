@@ -5,8 +5,6 @@
  */
 package org.mapstruct.ap.internal.model.source;
 
-import static org.mapstruct.ap.internal.model.source.MappingOptions.getMappingTargetNamesBy;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -20,6 +18,8 @@ import org.mapstruct.ap.internal.model.common.TypeFactory;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.Message;
 import org.mapstruct.ap.internal.util.accessor.Accessor;
+
+import static org.mapstruct.ap.internal.model.source.MappingOptions.getMappingTargetNamesBy;
 
 /**
  * Encapsulates all options specifiable on a mapping method

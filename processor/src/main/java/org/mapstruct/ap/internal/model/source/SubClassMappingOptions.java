@@ -5,10 +5,6 @@
  */
 package org.mapstruct.ap.internal.model.source;
 
-import static java.util.Objects.nonNull;
-import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_ILLEGAL_SUBCLASS;
-import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_METHOD_SIGNATURE_NOT_SUPPORTED;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +19,13 @@ import org.mapstruct.ap.internal.gem.SubClassMappingsGem;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.TypeUtils;
 
+import static java.util.Objects.nonNull;
+import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_ILLEGAL_SUBCLASS;
+import static org.mapstruct.ap.internal.util.Message.SUBCLASSMAPPING_METHOD_SIGNATURE_NOT_SUPPORTED;
+
 /**
+ * Represents a sub class mapping as configured via {@code @SubClassMapping}.
+ *
  * @author Ben Zegveld
  */
 public class SubClassMappingOptions extends DelegatingOptions {

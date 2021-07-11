@@ -30,9 +30,10 @@ public class SubClassMapping extends ModelElement {
     private String sourceArgument;
     private TypeUtils typeUtils;
 
-    public SubClassMapping(Type sourceType, Type targetType, TypeUtils typeUtils) {
+    public SubClassMapping(Type sourceType, Type targetType, Assignment assignment, TypeUtils typeUtils) {
         this.sourceType = sourceType;
         this.targetType = targetType;
+        this.assignment = assignment;
         this.typeUtils = typeUtils;
     }
 
@@ -43,10 +44,6 @@ public class SubClassMapping extends ModelElement {
     @Override
     public Set<Type> getImportTypes() {
         return new HashSet<>( Arrays.asList( sourceType, targetType ) );
-    }
-
-    public void setAssignment(Assignment assignment) {
-        this.assignment = assignment;
     }
 
     public AssignmentWrapper getAssignment() {
