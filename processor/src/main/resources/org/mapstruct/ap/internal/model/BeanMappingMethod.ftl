@@ -36,9 +36,6 @@
     </#if>
     <#if isAbstractReturnType()>
         throw new IllegalArgumentException("Not all subclasses are supported for this mapping. Missing for " + ${parameters[0].name}.getClass());
-        <#if hasSubClassMappings()>
-            }
-        </#if>
     <#else>
     <#if !existingInstanceMapping>
         <#if hasConstructorMappings()>
@@ -136,9 +133,9 @@
         return ${resultName};
     </#if>
     </#if>
-        <#if hasSubClassMappings()>
-            }
-        </#if>
+    </#if>
+    <#if hasSubClassMappings()>
+        }
     </#if>
 }
 <#macro throws>
