@@ -20,6 +20,10 @@ import org.mapstruct.ap.internal.model.common.Type;
 import org.mapstruct.ap.internal.util.TypeUtils;
 
 /**
+ * Represents the mapping between a SubClass and its mapping target. This will be used by a {@link BeanMappingMethod}
+ * that has {@link org.mapstruct.SubClassMapping} annotations applied to it. Before doing the normal mapping for that
+ * method it will first check if the source object is of the sourceType if so it will use the assignment instead.
+ *
  * @author Ben Zegveld
  */
 public class SubClassMapping extends ModelElement {
