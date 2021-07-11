@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
@@ -347,9 +348,7 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
 
             List<SubClassMapping> subClasses = new ArrayList<>();
             for ( SubClassMappingOptions subClassMappingOptions : method.getOptions().getSubClassMappings() ) {
-                if ( subClassMappingOptions.isEffective( method ) ) {
-                    subClasses.add( createSubClassMapping( subClassMappingOptions ) );
-                }
+                subClasses.add( createSubClassMapping( subClassMappingOptions ) );
             }
 
             MethodReference finalizeMethod = null;

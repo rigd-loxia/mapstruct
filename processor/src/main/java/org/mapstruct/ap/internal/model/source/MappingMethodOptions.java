@@ -329,4 +329,21 @@ public class MappingMethodOptions {
         return getPropertyEntries( mapping )[0];
     }
 
+    /**
+     * SubClassMappingOptions are not inherited to forged methods. They would result in an infinite loop if they were.
+     *
+     * @return a MappingMethodOptions without SubClassMappingOptions.
+     */
+    public static MappingMethodOptions getForgedMethodInheritedOptions(MappingMethodOptions options) {
+        return new MappingMethodOptions(
+            options.mapper,
+            options.mappings,
+            options.iterableMapping,
+            options.mapMapping,
+            options.beanMapping,
+            options.enumMappingOptions,
+            options.valueMappings,
+            Collections.emptyList() );
+    }
+
 }
